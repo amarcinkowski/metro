@@ -6,7 +6,6 @@ class MySpec extends Specification {
     @Unroll
     def "max(#a,#b) == #c"() {
         expect:
-        // This class is in our Java code
         Main.max(a, b) == c
 
         where:
