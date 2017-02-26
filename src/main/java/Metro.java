@@ -13,8 +13,6 @@ import java.io.*;
 public class Metro {
 
     public void run(String file) throws IOException {
-        InputStream is = new FileInputStream(file);
-        Reader r = new InputStreamReader(is, "UTF-8"); // e.g., euc-jp or utf-8
         MetroLexer lexer = new MetroLexer(new ANTLRFileStream(file));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         MetroParser parser = new MetroParser(tokens);
