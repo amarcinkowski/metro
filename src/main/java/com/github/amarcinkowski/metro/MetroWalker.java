@@ -1,14 +1,13 @@
+package com.github.amarcinkowski.metro;
+
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Vector;
 
-/**
- * Created by amarcinkowski on 26.02.17.
- */
 @Slf4j
 public class MetroWalker extends MetroBaseListener {
 
-    private Vector<String> commands = new Vector<String>();
+    private Vector<String> commands = new Vector<>();
 
     public Vector<String> getCommands() {
         return commands;
