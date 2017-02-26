@@ -9,10 +9,13 @@ command
     : ('print') '(' arguments? ')'
     ;
 arguments
+    : (argument (',' argument)*)
+    ;
+argument
     : TEXT+
     ;
 TEXT
-    : ('A'..'Z' | 'a'..'z')+
+    : '"' ('A'..'Z' | 'a'..'z' | '\u0100' .. '\u017E' | WHITESPACE)+ '"'
     ;
 
 WHITESPACE
