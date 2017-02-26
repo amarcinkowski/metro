@@ -16,8 +16,9 @@ public class Main {
         MetroParser parser = new MetroParser(tokens);
         ParseTree tree = parser.prog();
         ParseTreeWalker walker = new ParseTreeWalker();
-        walker.walk(new MetroWalker(), tree);
-        System.out.println("empty");
+        MetroWalker metroWalker = new MetroWalker();
+        walker.walk(metroWalker, tree);
+        System.out.println(metroWalker.getCommands());
     }
 
     public static int max(int a, int b) {

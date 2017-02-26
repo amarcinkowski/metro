@@ -2,12 +2,15 @@ grammar Metro;
 
 prog:
     (command NEWLINE)*
+    | NEWLINE*
     ;
 
-command:
-    ('print')
+command
+    : ('print') '(' arguments? ')'
     ;
-
+arguments
+    : TEXT+
+    ;
 TEXT
     : ('A'..'Z' | 'a'..'z')+
     ;
