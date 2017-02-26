@@ -5,12 +5,19 @@
 	<artifactId>metro</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<!-- geb, spock... -->
 	<properties>
 		<gebVersion>0.9.3</gebVersion>
 		<seleniumVersion>2.42.2</seleniumVersion>
 	</properties>
+
 	<dependencies>
+		<!-- antlr4 -->
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4</artifactId>
+			<version>4.6</version>
+		</dependency>
+		<!-- geb, spock... -->
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
@@ -75,6 +82,19 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr4-maven-plugin</artifactId>
+				<version>4.6	</version>
+				<executions>
+					<execution>
+						<id>antlr</id>
+						<goals>
+							<goal>antlr4</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
