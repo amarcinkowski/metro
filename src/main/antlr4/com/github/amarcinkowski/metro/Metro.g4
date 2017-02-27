@@ -1,12 +1,21 @@
 grammar Metro;
 
-prog:
-    (command NEWLINE)*
+prog
+    : ((go | function | block) NEWLINE)*
     | NEWLINE*
     ;
-
+// Rules
+function
+    : 'function' WHITESPACE name=ID '(' arguments? ')' (NEWLINE | WHITESPACE)? '{' NEWLINE? block? '}'
+    ;
+go
+    : 'go' WHITESPACE name=ID '(' arguments? ')'
+    ;
+block
+    : (WHITESPACE* command NEWLINE?)*
+    ;
 command
-    : ('print') '(' arguments? ')'
+    : 'print' '(' arguments? ')'
     ;
 arguments
     : (argument (',' argument)*)
@@ -14,16 +23,23 @@ arguments
 argument
     : TEXT+
     ;
+// TOKENS
+ID
+    : ('A'..'Z' | 'a'..'z' | '0'..'9' | POLISH)+
+    ;
+POLISH
+    : 'Ą' | 'Ę' | 'Ś' | 'Ć' | 'Ż' | 'Ź' | 'Ó' | 'Ł' | 'Ń' | 'ą' | 'ę' | 'ś'| 'ć' | 'ż' | 'ź' | 'ó' | 'ł' | 'ń'
+    ;
 TEXT
-    : '"' ('A'..'Z' | 'a'..'z' | '\u0100' .. '\u017E' | WHITESPACE)+ '"'
+    : '"' (ID | WHITESPACE)+ '"'
     ;
 
 WHITESPACE
-    : ( '\t' | ' ' |'\u000C' )+ -> skip
+    : ( '\t' | ' ' )+
     ;
 
 NEWLINE :
-    [\r\n]+
+    [\r?\n]+
     ;
 INT     :
     [0-9]+

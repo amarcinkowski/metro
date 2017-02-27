@@ -15,7 +15,7 @@ class MetroSpec extends Specification {
 
     }
 
-    def "com.github.amarcinkowski.metro.Metro.run with simple.metro should parse properly"()
+    def "simple.metro should parse properly"()
     {
         given:
         def metro = new Metro()
@@ -30,4 +30,38 @@ class MetroSpec extends Specification {
         assert commands.get(2).contains("Cześć Świecie")
     }
 
+    def "function.metro should parse properly"()
+    {
+        given:
+        def metro = new Metro()
+        when:
+        metro.run(new File("src/test/resources/function.metro"))
+        then:
+        def commands = metro.metroWalker.getCommands()
+        assert commands.size() == 4
+        assert commands.get(0).matches("print\\(\"abc4\"\\)")
+        assert commands.get(1).matches("print\\(\"abc5\"\\)")
+        assert commands.get(3) == "print()"
+        assert commands.get(2) == "print(\"hello\")"
+    }
+
+    def "repeated.metro should throw Ex"()
+    {
+        given:
+        def metro = new Metro()
+        when:
+        metro.run(new File("src/test/resources/repeated.metro"))
+        then:
+        thrown(RuntimeException)
+    }
+
+    def "missing.metro should throw Ex"()
+    {
+        given:
+        def metro = new Metro()
+        when:
+        metro.run(new File("src/test/resources/missing.metro"))
+        then:
+        thrown(RuntimeException)
+    }
 }

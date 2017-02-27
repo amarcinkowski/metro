@@ -1,0 +1,30 @@
+function abc1() {}
+
+function abc() {
+print()
+}
+
+function abc3() {
+
+}
+function abc4() {
+print("abc4")
+}
+
+function abc5() {
+    print("abc5")
+}
+go abc4()
+
+function zxc1() {}
+function zxc2() {}
+
+go abc5()
+function aaa()
+{
+print("hello")
+}
+
+
+go aaa()
+go abc("arg")

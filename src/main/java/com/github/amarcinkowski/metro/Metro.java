@@ -13,15 +13,27 @@ public class Metro {
 
     private MetroWalker metroWalker;
 
-    public void run(File file) throws IOException {
-        MetroLexer lexer = new MetroLexer(new ANTLRFileStream(file.getAbsolutePath()));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        MetroParser parser = new MetroParser(tokens);
-        ParseTree tree = parser.prog();
+    private void print() {
+        log.info(metroWalker.getCommands().toString());
+    }
+
+    private void walk(ParseTree tree) {
         ParseTreeWalker walker = new ParseTreeWalker();
         metroWalker = new MetroWalker();
         walker.walk(metroWalker, tree);
-        log.info(metroWalker.getCommands().toString());
+    }
+
+    private void parse(MetroLexer lexer) {
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        MetroParser parser = new MetroParser(tokens);
+        ParseTree tree = parser.prog();
+        walk(tree);
+    }
+
+    public void run(File file) throws IOException {
+        MetroLexer lexer = new MetroLexer(new ANTLRFileStream(file.getAbsolutePath()));
+        parse(lexer);
+        print();
     }
 
 }
