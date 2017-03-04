@@ -19,7 +19,7 @@
 		<!-- antlr4 -->
         <dependency>
             <groupId>org.antlr</groupId>
-            <artifactId>antlr4-runtime</artifactId>
+            <artifactId>antlr4</artifactId>
             <version>${antlr4}</version>
         </dependency>
 		<!-- lombok -->
