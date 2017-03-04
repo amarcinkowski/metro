@@ -1,0 +1,37 @@
+// fn comment
+function commentFunction1() {
+print("cf1")
+}
+
+function commentFunction2() { // comment after fn
+ print("cf21") // after command inln // comm
+ // comm
+ // comm
+ print("cf22")
+ // after command under
+}
+
+//comment
+
+// special chars comment #$%@#$^#^&%^&*^&*)^(*)_+"'
+
+function commentFunction3() {
+// in fn comment
+}
+
+  // comment indent
+
+
+// comment // comment after comment
+
+// before block
+print("block")
+// after block
+
+// empty comment below
+//
+
+// go commentFunction1
+go commentFunction2()  // after command comment
+
+//last line comment

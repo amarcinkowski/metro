@@ -1,0 +1,17 @@
+// no arg f
+function f1() {
+ print("f1")
+}
+// one arg f
+function f2(arg1) {
+ print(arg1)
+}
+// two arg f
+function f3(arg1,arg2) {
+ print(arg1)
+ print(arg2)
+}
+
+go f3("f3a","f3b")
+go f2("f2")
+go f1()

@@ -1,0 +1,10 @@
+
+function a(x,y) {
+// single param
+print(x)
+print(y)
+// multiparam
+print(x,y)
+}
+
+go a("q","w")

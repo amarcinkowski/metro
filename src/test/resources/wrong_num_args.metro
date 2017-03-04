@@ -1,0 +1,6 @@
+
+function f(arg1,arg2) {
+
+}
+
+go f("a1")

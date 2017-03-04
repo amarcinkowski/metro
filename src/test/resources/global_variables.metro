@@ -1,0 +1,11 @@
+
+var qwe="qwe var"
+var zxc="zxc var"
+
+function a() {
+print(qwe)
+}
+
+go a()
+
+print(zxc)

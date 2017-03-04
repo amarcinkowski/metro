@@ -1,8 +1,7 @@
-function abc1() {}
-
 function abc() {
 print()
 }
+function abc1() {}
 
 function abc3() {
 
@@ -23,8 +22,9 @@ go abc5()
 function aaa()
 {
 print("hello")
+print("hello2")
 }
 
 
 go aaa()
-go abc("arg")
+go abc()
