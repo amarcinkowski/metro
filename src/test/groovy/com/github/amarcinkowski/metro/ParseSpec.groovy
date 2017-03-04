@@ -1,5 +1,9 @@
 package com.github.amarcinkowski.metro
 
+import com.github.amarcinkowski.metro.exceptions.DuplicateFunctionException
+import com.github.amarcinkowski.metro.exceptions.MissingFunctionException
+import com.github.amarcinkowski.metro.exceptions.ParamNotSetException
+import com.github.amarcinkowski.metro.exceptions.WrongNumberArgsException
 import spock.lang.Specification
 import spock.lang.Unroll
 

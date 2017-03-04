@@ -1,4 +1,4 @@
-package com.github.amarcinkowski.metro;
+package com.github.amarcinkowski.metro.exceptions;
 
 public class DuplicateFunctionException extends RuntimeException {
 
