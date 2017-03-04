@@ -1,6 +1,6 @@
 
 function f(arg1,arg2) {
-
+  print(arg1)
 }
 
 go f("a1")
