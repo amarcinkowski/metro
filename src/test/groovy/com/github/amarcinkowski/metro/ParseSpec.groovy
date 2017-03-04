@@ -2,6 +2,7 @@ package com.github.amarcinkowski.metro
 
 import com.github.amarcinkowski.metro.exceptions.DuplicateFunctionException
 import com.github.amarcinkowski.metro.exceptions.MissingFunctionException
+import com.github.amarcinkowski.metro.exceptions.MissingMetroSourceException
 import com.github.amarcinkowski.metro.exceptions.ParamNotSetException
 import com.github.amarcinkowski.metro.exceptions.WrongNumberArgsException
 import spock.lang.Specification
@@ -20,7 +21,7 @@ class ParseSpec extends Specification {
         thrown(exception)
         where:
         file                    | exception
-        "missing.file"          | IOException
+        "missing.file"          | MissingMetroSourceException
         "missing.metro"         | MissingFunctionException
         "repeated.metro"        | DuplicateFunctionException
         "wrong_num_args.metro"  | WrongNumberArgsException

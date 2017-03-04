@@ -1,5 +1,6 @@
 package com.github.amarcinkowski.metro;
 
+import com.github.amarcinkowski.metro.exceptions.MissingMetroSourceException;
 import lombok.extern.slf4j.Slf4j;
 import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.ANTLRFileStream;
@@ -47,8 +48,15 @@ public class Metro {
         walk(tree);
     }
 
-    public void run(File file) throws IOException {
-        MetroLexer lexer = new MetroLexer(new ANTLRFileStream(file.getAbsolutePath()));
+    public void run(File file) throws MissingMetroSourceException {
+        ANTLRFileStream stream;
+        try {
+            stream = new ANTLRFileStream(file.getAbsolutePath());
+        } catch (IOException e) {
+            log.info("Missing metro source file " + file.getName() + " at " + file.getAbsolutePath());
+            throw new MissingMetroSourceException("Missing file " + file.getName());
+        }
+        MetroLexer lexer = new MetroLexer(stream);
         parse(lexer);
         print();
         if (Math.random() > 1) {
