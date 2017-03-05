@@ -1,6 +1,7 @@
 
 var qwe="qwe var"
 var zxc="zxc var"
+var with_special_chars="qwe ņ~!@#$%^&*(){}:"
 
 function a() {
 print(qwe)

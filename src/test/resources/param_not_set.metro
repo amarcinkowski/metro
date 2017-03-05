@@ -1,4 +1,4 @@
 
-var param1 = "param1"
+var param1="param1"
 
 print(param2)

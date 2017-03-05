@@ -37,13 +37,19 @@ COMMENT
     : (WHITESPACE* '//' ~[\r?\n]*)+ -> skip
     ;
 ID
-    : ('A'..'Z' | 'a'..'z' | '0'..'9' | POLISH)+
+    : ('A'..'Z' | 'a'..'z' | '0'..'9' | '_' | POLISH)+
     ;
 POLISH
     : 'Ą' | 'Ę' | 'Ś' | 'Ć' | 'Ż' | 'Ź' | 'Ó' | 'Ł' | 'Ń' | 'ą' | 'ę' | 'ś'| 'ć' | 'ż' | 'ź' | 'ó' | 'ł' | 'ń'
     ;
+UNICODE
+    : '\u00A1' .. '\u03FF'
+    ;
+SPECIALS
+    : '\u0021' | '\u0023' .. '\u002F' | '\u003A' .. '\u0040' | '\u005B' .. '\u0060' | '\u007B' .. '\u007E'
+    ;
 fragment STRING
-    : (ID | WHITESPACE)+
+    : (ID | WHITESPACE | SPECIALS | UNICODE)+
     ;
 TEXT
     : '"' STRING '"'
