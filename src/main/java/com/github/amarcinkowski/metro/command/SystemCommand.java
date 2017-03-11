@@ -7,14 +7,14 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class PrintCommand extends Command {
+public class SystemCommand extends Command {
 
-    public PrintCommand(Vector<String> args, HashMap<String, String> typedArgs) {
+    public SystemCommand(Vector<String> args, HashMap<String, String> typedArgs) {
         super(args, typedArgs);
     }
 
     @Override
     public void execute() {
-        log.trace("EXEC print # " + getArgs().stream().collect(Collectors.joining(" % ")));
+        log.debug("EXEC system: " + getTypedArgs().get("command") + " arg: " + getTypedArgs().get("commandArg"));
     }
 }

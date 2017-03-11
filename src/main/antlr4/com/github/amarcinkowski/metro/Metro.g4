@@ -27,7 +27,7 @@ parameter
     : ID
     ;
 commandParameters
-    : (commandParameter (',' commandParameter)*)
+    : (commandParameter (',' commandParameter)*?)
     ;
 commandParameter
     : (type ':')? ID

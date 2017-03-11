@@ -1,0 +1,6 @@
+
+function func(arg1,arg2) {
+    system(command:arg1,commandArg:arg2)
+}
+
+go func("/bin/bash","echo")

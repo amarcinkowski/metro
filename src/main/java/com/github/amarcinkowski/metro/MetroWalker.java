@@ -60,11 +60,11 @@ public class MetroWalker extends MetroBaseListener {
         String commandName = commandCtx.name.getText();
         try {
             Class commandClass = commandFactory.getCommand(commandName);
-            Vector<String> argValues = substituteParamsWithValues(commandCtx, args);
+            Params argValues = substituteParamsWithValues(commandCtx, args);
             log.trace(">>> ARG VALUES: " + argValues);
-            commands.add(commandCtxToString(commandCtx,argValues));
-            Constructor constructor = commandClass.getConstructor(Vector.class);
-            Command commandObject = (Command) constructor.newInstance(argValues);
+            commands.add(commandCtxToString(commandCtx,argValues.getParams()));
+            Constructor constructor = commandClass.getConstructor(Vector.class,HashMap.class);
+            Command commandObject = (Command) constructor.newInstance(argValues.getParams(), argValues.getParamTypes());
             commandsFifo.add(commandObject);
         } catch (ClassNotFoundException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | InstantiationException e) {
             log.error("Missing command " + e.getMessage());
@@ -84,7 +84,7 @@ public class MetroWalker extends MetroBaseListener {
         return command;
     }
 
-    private Vector<String> substituteParamsWithValues(MetroParser.CommandContext ctx, HashMap<String, String> locals) {
+    private Params substituteParamsWithValues(MetroParser.CommandContext ctx, HashMap<String, String> locals) {
 
         // no null pointer for commands outside functions
         if (locals == null) {
@@ -93,7 +93,7 @@ public class MetroWalker extends MetroBaseListener {
 
         // check if all params has possible values
         int commandsNumberOfParams = (ctx.commandParameters() != null ? ctx.commandParameters().commandParameter().size() : 0);
-        Vector<String> params = new Vector<>();
+        Params params = new Params();
         for (int i = 0; i < commandsNumberOfParams; i++) {
             String param = ctx.commandParameters().commandParameter(i).ID().getText();
 
@@ -103,7 +103,7 @@ public class MetroWalker extends MetroBaseListener {
                 throw new ParamNotSetException("No value for param " + param);
             }
 
-            params.add(param);
+            params.add(ctx.commandParameters().commandParameter(i));
         }
 
         // substitue with values
@@ -118,14 +118,12 @@ public class MetroWalker extends MetroBaseListener {
                     // local - first
                     if (locals.containsKey(param)) {
                         log.debug("LOCAL PARAM " + param + " -> " + locals.get(param));
-                        params.remove(currentParamIndex);
-                        params.add(currentParamIndex, locals.get(param));
+                        params.replace(currentParamIndex, locals.get(param));
                     } else
                         // global - second
                         if (globals.containsKey(param)) {
                             log.debug("GLOBAL PARAM " + param + " -> " + globals.get(param));
-                            params.remove(currentParamIndex);
-                            params.add(currentParamIndex, globals.get(param));
+                            params.replace(currentParamIndex, globals.get(param));
                         }
                 }
             } else if (ctx.getChild(i).getClass().equals(MetroParser.ArgumentsContext.class)) {
@@ -143,6 +141,9 @@ public class MetroWalker extends MetroBaseListener {
             log.trace(ctx.getText() + " ANCESTORS " + getAncestors(ctx));
 
             // command parameters with globals
+            if (ctx.arguments() != null && ctx.arguments().argument() != null) {
+                log.trace("Command has " + ctx.arguments().argument().size() + " arguments");
+            }
             addCommand(ctx,null);
         }
     }
