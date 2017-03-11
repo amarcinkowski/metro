@@ -8,5 +8,6 @@ print(qwe)
 }
 
 go a()
-
+print(with_special_chars)
 print(zxc)
+

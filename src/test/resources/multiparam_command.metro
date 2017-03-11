@@ -4,7 +4,7 @@ function a(x,y) {
 print(x)
 print(y)
 // multiparam
-print(x,y)
+print(x,y,x,x,y)
 }
 
 go a("q","w")

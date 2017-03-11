@@ -3,4 +3,5 @@ function abc1() {
 
 }
 
+// function abc wasn't defined
 go abc()

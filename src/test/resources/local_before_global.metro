@@ -1,0 +1,12 @@
+
+var zxc="zxc global"
+
+function fun(zxc) {
+  print(zxc)
+}
+
+// TODO replace global value
+var zxc="zxc global2"
+
+go fun("zxc local")
+

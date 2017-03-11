@@ -18,7 +18,7 @@ block
     : (WHITESPACE* command NEWLINE?)+
     ;
 command
-    : 'print' '(' (arguments | parameters)? ')'
+    : name=ID '(' (arguments | parameters)? ')'
     ;
 parameters
     : (parameter (',' parameter)*)

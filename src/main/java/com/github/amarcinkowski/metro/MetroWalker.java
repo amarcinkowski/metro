@@ -1,15 +1,16 @@
 package com.github.amarcinkowski.metro;
 
-import com.github.amarcinkowski.metro.exceptions.DuplicateFunctionException;
-import com.github.amarcinkowski.metro.exceptions.MissingFunctionException;
-import com.github.amarcinkowski.metro.exceptions.ParamNotSetException;
-import com.github.amarcinkowski.metro.exceptions.WrongNumberArgsException;
+import com.github.amarcinkowski.metro.command.Command;
+import com.github.amarcinkowski.metro.command.CommandFactory;
+import com.github.amarcinkowski.metro.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 @Slf4j
 public class MetroWalker extends MetroBaseListener {
@@ -17,9 +18,15 @@ public class MetroWalker extends MetroBaseListener {
     private Vector<String> commands = new Vector<>();
     private HashMap<String, ParseTree> functions = new HashMap<>();
     private HashMap<String, String> globals = new HashMap<>();
+    private Vector<Command> commandsFifo = new Vector<>();
+    private CommandFactory commandFactory = new CommandFactory();
 
     public Vector<String> getCommands() {
         return commands;
+    }
+
+    public Vector<Command> getCommandsFifo() {
+        return commandsFifo;
     }
 
     public static List<? extends ParseTree> getAncestors(ParseTree t) {
@@ -49,41 +56,84 @@ public class MetroWalker extends MetroBaseListener {
         return false;
     }
 
-    private String replaceParamWithGlobal(String param, String command) {
-        if (globals.containsKey(param)) {
-            log.debug("GLOBAL PARAM " + param + " should be " + globals.get(param));
-            command = command.replaceAll("(\\(|,)" + param + "(\\)|,)", "$1" + globals.get(param) + "$2");
+    private void addCommand(MetroParser.CommandContext commandCtx, HashMap<String,String> args) {
+        String commandName = commandCtx.name.getText();
+        try {
+            Class commandClass = commandFactory.getCommand(commandName);
+            Vector<String> argValues = substituteParamsWithValues(commandCtx, args);
+            log.trace(">>> ARG VALUES: " + argValues);
+            commands.add(commandCtxToString(commandCtx,argValues));
+            Constructor constructor = commandClass.getConstructor(Vector.class);
+            Command commandObject = (Command) constructor.newInstance(argValues);
+            commandsFifo.add(commandObject);
+        } catch (ClassNotFoundException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | InstantiationException e) {
+            log.error("Missing command " + e.getMessage());
+            throw new MissingCommandException("Missing command " + commandName);
         }
+    }
+
+    private String commandCtxToString(MetroParser.CommandContext ctx, Vector<String> argValues) {
+        String command = ctx.getText();
+        if (ctx.parameters() != null) {
+            for(int i = 0; i < ctx.parameters().parameter().size(); i++) {
+                String param = ctx.parameters().parameter(i).getText();
+                command = command.replaceAll("(\\(|,)" + param + "(\\)|,)", "$1" + Matcher.quoteReplacement(argValues.get(i)) + "$2");
+            }
+        }
+        log.trace("COMMAND toString " + command);
         return command;
     }
 
-    private String substituteParamsWithValues(MetroParser.CommandContext ctx, HashMap<String, String> locals) {
-        String command = ctx.getText();
+    private Vector<String> substituteParamsWithValues(MetroParser.CommandContext ctx, HashMap<String, String> locals) {
 
         // no null pointer for commands outside functions
         if (locals == null) {
             locals = new HashMap<>();
         }
 
-        // if command has params replace it with functions' go arguments
+        // check if all params has possible values
         int commandsNumberOfParams = (ctx.parameters() != null ? ctx.parameters().parameter().size() : 0);
+        Vector<String> params = new Vector<>();
         for (int i = 0; i < commandsNumberOfParams; i++) {
             String param = ctx.parameters().parameter(i).getText();
 
             // no value in globals and locals - throw pns
             if (!(globals.containsKey(param) || locals.containsKey(param))) {
+                log.error("Param value not set: " + param);
                 throw new ParamNotSetException("No value for param " + param);
             }
 
-            // local - first
-            if (locals.containsKey(param)) {
-                log.debug("LOCAL PARAM " + param + " should be " + locals.get(param));
-                command = command.replaceAll("(\\(|,)" + param + "(\\)|,)", "$1" + locals.get(param) + "$2");
-            }
-            // global - second
-            command = replaceParamWithGlobal(param, command);
+            params.add(param);
         }
-        return command;
+
+        // substitue with values
+        for(int i =2; i < ctx.getChildCount() - 1; i++) {
+            int index = i - 2;
+            log.trace(ctx.getChild(i).getText() + " > " + ctx.getChild(i).getClass().getSimpleName());
+            if (ctx.getChild(i).getClass().equals(MetroParser.ParametersContext.class)) {
+                int paramIndex = 0;
+                for(MetroParser.ParameterContext parameterContext : ctx.parameters().parameter()) {
+                    int currentParamIndex = index + paramIndex++;
+                    String param = params.get(currentParamIndex);
+                    // local - first
+                    if (locals.containsKey(param)) {
+                        log.debug("LOCAL PARAM " + param + " -> " + locals.get(param));
+                        params.remove(currentParamIndex);
+                        params.add(currentParamIndex, locals.get(param));
+                    } else
+                        // global - second
+                        if (globals.containsKey(param)) {
+                            log.debug("GLOBAL PARAM " + param + " -> " + globals.get(param));
+                            params.remove(currentParamIndex);
+                            params.add(currentParamIndex, globals.get(param));
+                        }
+                }
+            } else if (ctx.getChild(i).getClass().equals(MetroParser.ArgumentsContext.class)) {
+                log.trace("ARGUMENT CONTEXT");
+                params.add(index,ctx.getChild(i).getText());
+            }
+        }
+        return params;
     }
 
     @Override
@@ -93,8 +143,7 @@ public class MetroWalker extends MetroBaseListener {
             log.trace(ctx.getText() + " ANCESTORS " + getAncestors(ctx));
 
             // command parameters with globals
-            String command = substituteParamsWithValues(ctx, null);
-            commands.add(command);
+            addCommand(ctx,null);
         }
     }
 
@@ -108,15 +157,32 @@ public class MetroWalker extends MetroBaseListener {
         log.trace("ARG " + ctx.getText());
     }
 
+
+    private void checkDuplicate(String name) {
+        if (functions.containsKey(name)) {
+            log.error("Cannot redeclare " + name + " - already exists");
+            throw new DuplicateFunctionException("Function already exists");
+        }
+    }
+
+    private void checkUniqueParams(MetroParser.ParametersContext paramsCtx) {
+        if (paramsCtx != null) {
+            Vector<String> params = new Vector<>();
+            paramsCtx.parameter().forEach(s -> params.add(s.getText()));
+            if (params.stream().distinct().count() != params.size()) {
+                log.error("Should have parameters with unique names " + params.toString());
+                throw new NonUniqueParamsException("Should have parameters with unique names");
+            }
+        }
+    }
+
     @Override
     public void exitFunction(MetroParser.FunctionContext ctx) throws RuntimeException {
         log.debug("FUNCTION " + ctx.name.getText());
-        if (functions.containsKey(ctx.name.getText())) {
-            log.error("Cannot redeclare " + ctx.name.getText() + " - already exists");
-            throw new DuplicateFunctionException("Function already exists");
-        } else {
+        checkDuplicate(ctx.name.getText());
+        checkUniqueParams(ctx.parameters());
         functions.put(ctx.name.getText(), ctx);
-    }}
+    }
 
     @Override
     public void exitBlock(MetroParser.BlockContext ctx) {
@@ -179,8 +245,7 @@ public class MetroWalker extends MetroBaseListener {
                     argValues.put(param, arg);
                 }
 
-                String command = substituteParamsWithValues(commandCtx, argValues);
-                commands.add(command);
+                addCommand(commandCtx,argValues);
             }
         }
     }

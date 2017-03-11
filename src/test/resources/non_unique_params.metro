@@ -1,0 +1,7 @@
+
+
+function f(arg1,arg1) {
+// should throw error - ambigous arg1
+}
+
+go f("a","b")

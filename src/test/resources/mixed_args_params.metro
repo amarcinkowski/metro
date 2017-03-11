@@ -1,0 +1,12 @@
+
+// FIXME cannot mix params and args in command
+
+
+var abc3="abc3"
+
+function func1(abc2) {
+// TODO mixing not possible yet:
+//    print("abc1",abc2,abc3)
+}
+
+go func1("abc2")
