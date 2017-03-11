@@ -1,11 +1,15 @@
 package com.github.amarcinkowski.metro.command;
 
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Vector;
 
 @Slf4j
+@EqualsAndHashCode()
+@ToString
 public abstract class Command {
 
     private Vector<String> args = new Vector<>();
