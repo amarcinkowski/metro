@@ -1,0 +1,12 @@
+
+function f(arg1) {
+    print(type:arg1)
+}
+
+go f("zxc")
+
+function f2(arg1,arg2) {
+    print(type1:arg1,type2:arg2)
+}
+
+go f2("zxc","qwe")

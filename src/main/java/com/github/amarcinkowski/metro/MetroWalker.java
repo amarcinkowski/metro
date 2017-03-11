@@ -74,9 +74,9 @@ public class MetroWalker extends MetroBaseListener {
 
     private String commandCtxToString(MetroParser.CommandContext ctx, Vector<String> argValues) {
         String command = ctx.getText();
-        if (ctx.parameters() != null) {
-            for(int i = 0; i < ctx.parameters().parameter().size(); i++) {
-                String param = ctx.parameters().parameter(i).getText();
+        if (ctx.commandParameters() != null) {
+            for(int i = 0; i < ctx.commandParameters().commandParameter().size(); i++) {
+                String param = ctx.commandParameters().commandParameter(i).getText();
                 command = command.replaceAll("(\\(|,)" + param + "(\\)|,)", "$1" + Matcher.quoteReplacement(argValues.get(i)) + "$2");
             }
         }
@@ -92,10 +92,10 @@ public class MetroWalker extends MetroBaseListener {
         }
 
         // check if all params has possible values
-        int commandsNumberOfParams = (ctx.parameters() != null ? ctx.parameters().parameter().size() : 0);
+        int commandsNumberOfParams = (ctx.commandParameters() != null ? ctx.commandParameters().commandParameter().size() : 0);
         Vector<String> params = new Vector<>();
         for (int i = 0; i < commandsNumberOfParams; i++) {
-            String param = ctx.parameters().parameter(i).getText();
+            String param = ctx.commandParameters().commandParameter(i).ID().getText();
 
             // no value in globals and locals - throw pns
             if (!(globals.containsKey(param) || locals.containsKey(param))) {
@@ -109,10 +109,10 @@ public class MetroWalker extends MetroBaseListener {
         // substitue with values
         for(int i =2; i < ctx.getChildCount() - 1; i++) {
             int index = i - 2;
-            log.trace(ctx.getChild(i).getText() + " > " + ctx.getChild(i).getClass().getSimpleName());
-            if (ctx.getChild(i).getClass().equals(MetroParser.ParametersContext.class)) {
+            log.debug(ctx.getChild(i).getText() + " > " + ctx.getChild(i).getClass().getSimpleName());
+            if (ctx.getChild(i).getClass().equals(MetroParser.CommandParametersContext.class)) {
                 int paramIndex = 0;
-                for(MetroParser.ParameterContext parameterContext : ctx.parameters().parameter()) {
+                for(MetroParser.CommandParameterContext commandParameterContext : ctx.commandParameters().commandParameter()) {
                     int currentParamIndex = index + paramIndex++;
                     String param = params.get(currentParamIndex);
                     // local - first
@@ -239,7 +239,7 @@ public class MetroWalker extends MetroBaseListener {
                 HashMap<String, String> argValues = new HashMap<>();
                 // map params to arg values
                 for (int i = 0; i < functionNumberOfParams; i++) {
-                    String param = parametersContext.parameter(i).getText();
+                    String param = parametersContext.parameter(i).ID().getText();
                     String arg = arguments.argument(i).getText();
                     log.trace("Param " + param + " should be " + arg);
                     argValues.put(param, arg);

@@ -18,12 +18,21 @@ block
     : (WHITESPACE* command NEWLINE?)+
     ;
 command
-    : name=ID '(' (arguments | parameters)? ')'
+    : name=ID '(' (arguments | commandParameters)? ')'
     ;
 parameters
     : (parameter (',' parameter)*)
     ;
 parameter
+    : ID
+    ;
+commandParameters
+    : (commandParameter (',' commandParameter)*)
+    ;
+commandParameter
+    : (type ':')? ID
+    ;
+type
     : ID
     ;
 arguments
