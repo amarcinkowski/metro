@@ -14,7 +14,9 @@ public class PrintCommand extends Command {
     }
 
     @Override
-    public void execute() {
-        log.trace("EXEC print # " + getArgs().stream().collect(Collectors.joining(" % ")));
+    public String execute() {
+        String args = getArgs().stream().collect(Collectors.joining(" % "));
+        log.trace("EXEC print # " + args);
+        return args;
     }
 }

@@ -29,7 +29,7 @@ public abstract class Command {
         this.typedArgs=typedArgs;
     }
 
-    public void execute() {
+    public String execute() {
         throw new RuntimeException("missing implementation");
     }
 
