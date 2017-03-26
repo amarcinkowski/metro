@@ -22,7 +22,7 @@ public class SystemCommand extends Command {
         String command = getTypedArgs().get("command");
         String commandArgs = getTypedArgs().get("commandArgs");
         log.debug("EXEC system: " + command + " arg: " + commandArgs);
-        Splitter splitter = Splitter.on('|').omitEmptyStrings().trimResults();
+        Splitter splitter = Splitter.on('\n').omitEmptyStrings().trimResults();
         List<String> commandLineList = new ArrayList<>();
         commandLineList.add(command);
         try {
@@ -55,7 +55,7 @@ public class SystemCommand extends Command {
 
                 String line = "";
                 while ((line = reader.readLine()) != null) {
-                    System.out.println("LINE" + line);
+                    System.out.println(">" + line);
                     output.append(line + "\n");
                 }
             }

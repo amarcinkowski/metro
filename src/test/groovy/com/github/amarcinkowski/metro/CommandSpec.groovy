@@ -1,7 +1,10 @@
 package com.github.amarcinkowski.metro
 
+import com.github.amarcinkowski.metro.command.PauseCommand
+import com.github.amarcinkowski.metro.command.PrintCommand
 import com.github.amarcinkowski.metro.command.SystemCommand
 import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * Created by amarcinkowski on 25.03.17.
@@ -16,15 +19,33 @@ class CommandSpec extends Specification {
         systemCommand.execute() == output
         where:
         command     | arguments                          | output                    | timeout
-        '/bin/bash' | '-c|echo "Hello world from bash";' | 'Hello world from bash\n' | "120"
-        '/bin/bash' | '-c|echo "Hello world from bash";' | 'NO-OUTPUT'               | "0"
+        '/bin/bash' | '-c\necho "Hello world from bash"' | 'Hello world from bash\n' | "120"
+        '/bin/bash' | '-c\necho "Hello world from bash"' | 'NO-OUTPUT'               | "0"
         '/bin/bash' | 'exit'                             | ''                        | "120"
         '/bin/bash' | ''                                 | ''                        | "1"
         '/bin/bash' | null                               | ''                        | "1"
         '/bin/bash' | ''                                 | 'NO-OUTPUT'               | "0"
         '/bin/bash' | null                               | 'NO-OUTPUT'               | "0"
-        '/bin/bash' | '-c|echo "abc" > out'              | 'NO-OUTPUT'               | "0"
-        '/bin/bash' | '-c|echo "zxc" >> out'             | 'NO-OUTPUT'               | "0"
-        '/bin/bash' | '-c|cat out'                       | 'abc\nzxc\n'              | "1"
+        '/bin/bash' | '-c\necho "abc" > out'             | 'NO-OUTPUT'               | "0"
+        '/bin/bash' | '-c\necho "zxc" >> out'            | 'NO-OUTPUT'               | "0"
+        '/bin/bash' | '-c\ncat out'                      | 'abc\nzxc\n'              | "1"
+    }
+
+    static system = new SystemCommand([] as Vector, [command: '/bin/bash', commandArgs: '-c\necho "Hello world from bash";', timeout: "1"] as HashMap)
+    static print = new PrintCommand(["hello"] as Vector, [] as HashMap)
+    static pause = new PauseCommand(["100"] as Vector, [] as HashMap)
+
+    @Unroll
+    def 'command #command.class should work properly'() {
+        given:
+        expect:
+        def out = command.execute()
+        print "Command output:" + out
+        assert out.matches( output )
+        where:
+        command                | output
+        system                 | 'Hello world from bash\n'
+        print                  | 'hello'
+        pause                  | 'Paused for 1[0-9]{2}'
     }
 }
