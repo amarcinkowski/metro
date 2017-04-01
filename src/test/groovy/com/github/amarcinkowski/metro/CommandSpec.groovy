@@ -1,14 +1,12 @@
 package com.github.amarcinkowski.metro
 
+import com.github.amarcinkowski.metro.command.KeyboardCommand
 import com.github.amarcinkowski.metro.command.PauseCommand
 import com.github.amarcinkowski.metro.command.PrintCommand
 import com.github.amarcinkowski.metro.command.SystemCommand
 import spock.lang.Specification
 import spock.lang.Unroll
 
-/**
- * Created by amarcinkowski on 25.03.17.
- */
 class CommandSpec extends Specification {
 
     def 'running bash command should give expected ouput'() {
@@ -34,18 +32,19 @@ class CommandSpec extends Specification {
     static system = new SystemCommand([] as Vector, [command: '/bin/bash', commandArgs: '-c\necho "Hello world from bash";', timeout: "1"] as HashMap)
     static print = new PrintCommand(["hello"] as Vector, [] as HashMap)
     static pause = new PauseCommand(["100"] as Vector, [] as HashMap)
+    static keyboard = new KeyboardCommand(["abc [enter]", "[alt-tab][tab]def", "z[enter]c", "[ctrl-c][ctrl-v]", "ABC", "[ctrl-alt-delete]"] as Vector, [] as HashMap)
 
     @Unroll
     def 'command #command.class should work properly'() {
-        given:
         expect:
         def out = command.execute()
-        print "Command output:" + out
-        assert out.matches( output )
+        println "Command output:" + out
+        assert out.matches(output)
         where:
-        command                | output
-        system                 | 'Hello world from bash\n'
-        print                  | 'hello'
-        pause                  | 'Paused for 1[0-9]{2}'
+        command | output
+        system  | 'Hello world from bash\n'
+        print   | 'hello'
+        pause   | 'Paused for 1[0-9]{2}'
+        keyboard               | 'Num of chars typed: 19'
     }
 }
