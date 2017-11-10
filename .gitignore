@@ -9,3 +9,5 @@ buildNumber.properties
 .mvn/timing.properties
 /.project
 /.classpath
+antlr4-generated/
+out
