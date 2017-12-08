@@ -13,6 +13,7 @@
 		<slf>1.7.24</slf>
 		<junit>4.12</junit>
         <spock>1.0-groovy-2.4</spock>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<dependencies>
