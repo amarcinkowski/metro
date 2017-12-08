@@ -7,7 +7,10 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
+.idea/
+.settings/
 /.project
 /.classpath
 antlr4-generated/
 out
+metro.iml
