@@ -2,7 +2,7 @@
 multi environment task robot - simple antr4 based language
 
 ## Build
-peform `mvn clean package`
+perform `mvn clean package`
 
 ## Definition
 
