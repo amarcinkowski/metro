@@ -13,4 +13,4 @@ buildNumber.properties
 /.classpath
 metro-core/src/main/antlr4-generated/
 out
-metro.iml
+*.iml
