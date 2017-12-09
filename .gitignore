@@ -11,6 +11,6 @@ buildNumber.properties
 .settings/
 /.project
 /.classpath
-antlr4-generated/
+metro-core/src/main/antlr4-generated/
 out
 metro.iml

@@ -10,8 +10,6 @@ import com.github.amarcinkowski.metro.exceptions.MissingMetroSourceException
 import com.github.amarcinkowski.metro.exceptions.NonUniqueParamsException
 import com.github.amarcinkowski.metro.exceptions.ParamNotSetException
 import com.github.amarcinkowski.metro.exceptions.WrongNumberArgsException
-import groovy.ui.SystemOutputInterceptor
-import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll
 
