@@ -1,0 +1,57 @@
+description = ''
+project.buildDir = 'target'
+
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath group:'ch.raffael.gradlePlugins.antlr4', name:'gradle-antlr4-plugin', version:'1.0'
+  }
+}
+
+apply plugin:'ch.raffael.antlr4'
+
+antlr4 {
+  // The version of the ANTLR tool to use; you can mix these using the runtimePackage argument
+  version = '4.7'
+  
+  // what to generate
+  listener = true
+  visitor = true
+  
+  // what package to find the runtime classes in; best used with preshadow
+  runtimePackage = 'org.antlr.v4.runtime'
+  
+  // where to put the generated classes
+  //destination = "$buildDir/antlr4/src"
+  destination = file('src/main/antlr4-generated')
+  
+  // where to put intermediate files
+  //generateDir = "$buildDir/antlr4/gen"
+}
+sourceSets.main.java.srcDirs += file('src/main/antlr4-generated') 
+
+dependencies {
+    compile group: 'org.antlr', name: 'antlr4', version:'4.7'
+
+//	compile "org.codehaus.groovy:groovy:1.8+"
+//	compile 'org.antlr:antlr4:4.0'
+
+//	antlr4 'org.antlr:antlr4:4.0'
+//	antlr4 'org.antlr:antlr4-runtime:4.0'
+//	antlr4 'org.antlr:antlr-runtime:3.5'
+//	antlr4 'org.antlr:ST4:4.0.7'
+  
+ 
+    compile(group: 'org.codehaus.gmavenplus', name: 'gmavenplus-plugin', version:'1.5') {
+exclude(module: 'gossip')
+exclude(module: 'slf4j-nop')
+exclude(module: 'slf4j-jdk14')
+exclude(module: 'jcl-over-slf4j')
+    }
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-server', version:'3.8.1'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-firefox-driver', version:'3.8.1'
+    testCompile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version:'3.8.1'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version:'1.16.18'
+}

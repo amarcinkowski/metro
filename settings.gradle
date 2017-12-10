@@ -1,0 +1,4 @@
+rootProject.name = 'metro'
+include ':metro-core'
+
+project(':metro-core').projectDir = "$rootDir/metro-core" as File
